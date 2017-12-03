@@ -1,0 +1,16 @@
+sudo: required
+dist: trusty
+
+language: node_js
+
+services:
+  - mongodb
+
+install:
+  - npm install
+
+before_script:
+  - ./.travis/prepare-mongodb.sh
+
+script:
+  - npm run test:travis-ci
