@@ -1,0 +1,21 @@
+sudo: required
+dist: trusty
+
+language: node_js
+node_js:
+  - "9"
+
+services:
+  - mongodb
+
+install:
+  - npm install
+
+before_script:
+  - sleep 15
+  - mongo githubnize-travis-ci --eval 'db.createCollection("GithubnizeUsers");'
+  - mongo githubnize-travis-ci --eval 'db.createCollection("GithubnizeGroups");'
+  - mongo githubnize-travis-ci --eval 'db.createUser({user:"githubnize-travis-ci",pwd:"123456", roles:[{role:"readWrite",db:"githubnize-travis-ci"}]});'
+
+script:
+  - npm run test:travis-ci

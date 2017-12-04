@@ -1,0 +1,44 @@
+{
+  "name": "githubnize-api",
+  "version": "0.0.1",
+  "main": "src",
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon -w src -w specs --exec \"npm run lint && npm start\"",
+    "__dev": "NODE_ENV=development nodemon -w src -w specs --exec \"npm run lint && npm run coverage:dev && npm start\"",
+    "dev:docker": "NODE_ENV=development_docker nodemon -w src -w specs --exec \"npm run lint && npm run test:docker && npm start\"",
+    "start": "node src",
+    "lint": "eslint src",
+    "test": "NODE_ENV=test mocha specs --recursive",
+    "test:docker": "NODE_ENV=test_docker mocha specs --recursive",
+    "test:travis-ci": "NODE_ENV=test_travis-ci mocha specs --recursive --exit",
+    "coverage": "nyc --check-coverage --lines 85 --functions 85 --branches 85 npm test",
+    "coverage:dev": "nyc --reporter=text-summary npm test",
+    "coverage:report": "nyc --reporter=html --reporter=text npm test && open coverage/index.html"
+  },
+  "repository": "git@github.com:mustafagonul/githubnize-api.git",
+  "author": "Mustafa Gonul <mustafagonul@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "compression": "^1.7.1",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-boom": "^2.0.0",
+    "helmet": "^3.9.0",
+    "mongoose": "^4.13.4"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^3.0.0",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "nyc": "^11.3.0",
+    "sinon": "^4.1.2"
+  }
+}
