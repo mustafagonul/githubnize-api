@@ -1,12 +1,12 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config/environment');
-const { User } = require('../models/user');
+// const config = require('../config/environment');
+// const { User } = require('../models/user');
 
 
-const AuthenticateController = {};
+const AuthController = {};
 
 
-AuthenticateController.authenticate = (email, password) => new Promise((resolve, reject) => {
+AuthController.authenticate = (email, password) => new Promise((resolve, reject) => {
+  /*
   const userData = { email };
 
   User.findOne(userData, (err, user) => {
@@ -39,7 +39,8 @@ AuthenticateController.authenticate = (email, password) => new Promise((resolve,
       accessToken: token,
     });
   }).select('+password').exec();
+  */
 });
 
 
-module.exports = AuthenticateController;
+module.exports = AuthController;
