@@ -1,5 +1,6 @@
 {
   "env": {
+    "host": "localhost",
     "port": 8080,
     "gracefullShutdown": false,
     "gracefullTimeout": 30000
@@ -23,6 +24,10 @@
   },
   "jwt": {
     "key": "key",
-    "expire": "30 days"
+    "expire": "30d"
+  },
+  "github": {
+    "client_id": "",
+    "client_secret": ""
   }
 }

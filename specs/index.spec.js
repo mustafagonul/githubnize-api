@@ -9,11 +9,11 @@ chai.use(chaiHttp);
 describe('/GET /', () => {
   it('it should return 200 for health check', (done) => {
     chai.request(app)
-    .get('/')
-    .end((err, res) => {
-      res.should.have.status(200);
-      done();
-    });
+      .get('/')
+      .end((err, res) => {
+        res.should.have.status(200);
+        done();
+      });
   });
 });
 
