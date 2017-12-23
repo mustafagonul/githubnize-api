@@ -1,45 +1,72 @@
-// const config = require('../config/environment');
-// const { User } = require('../models/user');
+const jwt = require('jsonwebtoken');
+const config = require('../config/environment');
+const github = require('../helpers/github');
+const User = require('../models/user');
+
+
+const createJWTToken = data => jwt.sign(
+  data, config.jwt.key, { expiresIn: config.jwt.expire },
+);
+
+const createSuccessMessage = (user, token) => {
+  const api_token = createJWTToken({ login: user.login, email: user.email, id: user.id }); // eslint-disable-line
+  const github_token = token; // eslint-disable-line
+  const login = user.login;
+
+  return {
+    api_token,
+    github_token,
+    login,
+  };
+};
+
+const getUser = (githubData) => new Promise((resolve, reject) => {
+  const userData = {
+    login: githubData.login,
+  };
+
+  return User.findOne(userData).then((user) => {
+    if (user === null) {
+      return reject('User could not be found!');
+    }
+
+    return resolve(createSuccessMessage(user, githubData.token));
+  }).catch((err) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(err); // eslint-disable-line no-console
+    }
+
+    return createUser(githubData).then(resolve, reject);
+  });
+});
+
+const createUser = (githubData) => new Promise((resolve, reject) => {
+  const userData = {
+    login: githubData.login,
+    email: githubData.email,
+    id: githubData.id,
+  };
+
+  const newUser = new User(userData);
+
+  return newUser.save()
+    .then(user => resolve(createSuccessMessage(user, githubData.token)))
+    .catch(reject);
+});
 
 
 const AuthController = {};
 
-
-AuthController.authenticate = (email, password) => new Promise((resolve, reject) => {
-  /*
-  const userData = { email };
-
-  User.findOne(userData, (err, user) => {
-    // Error
-    if (err) {
-      return reject(new Error('Authentication failed. Database Error!'));
-    }
-
-    // User not found
-    if (!user) {
-      return reject(new Error('Authentication failed. User not found.'));
-    }
-
-    // Wrong password
-    if (!user.comparePassword(password)) {
-      return reject(new Error('Authentication failed. Wrong password.'));
-    }
-
-    // Correct password
-    const payload = {
-      email: user.email,
-      _id: user._id,
-    };
-
-    const { secret } = config.jwt.secret;
-    const { expire } = config.jwt.expire;
-    const token = jwt.sign(payload, secret, { expiresIn: expire });
-
-    return resolve({
-      accessToken: token,
-    });
-  }).select('+password').exec();
-  */
+AuthController.authenticate = url => new Promise((resolve, reject) => {
+  return github.prepare(url).then(() => {;
+    return getUser(github.data)
+      .then(resolve, reject)
+      .catch((err) =>  {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(err); // eslint-disable-line no-console
+        }
+      });
+  });
 });
 
 

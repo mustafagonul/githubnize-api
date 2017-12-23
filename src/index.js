@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const config = require('./config/environment');
-
+const initializeDb = require('./db');
 const routes = require('./routes');
 
 let isShuttingDown = false;
@@ -30,14 +30,19 @@ app.use((req, res, next) => {
   return res.sendStatus(503);
 });
 
-// Routes
-app.use('/', routes(app));
+initializeDb().then(() => {
+  app.use('/', routes(app));
 
-app.server.listen(config.env.port);
+  app.use('*', (req, res) => {
+    res.boom.notFound();
+  });
 
-if (process.env.NODE_ENV === 'development') {
-  console.log(`Started on port ${config.env.port}`); // eslint-disable-line no-console
-}
+  app.server.listen(process.env.PORT || config.env.port);
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`Started on port ${config.env.port}`); // eslint-disable-line no-console
+  }
+});
 
 const gracefullShutdown = () => {
   if (!config.env.gracefullShutdown) {

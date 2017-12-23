@@ -1,45 +1,125 @@
 const config = require('../config/environment');
-// const fetch = require('node-fetch');
-const request = require('request');
+const fetch = require('node-fetch');
 const url = require('url');
 const qs = require('querystring');
+
+/*
+function objectToQueryString(params) {
+  return '?' + Object.entries(params)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+}
+
+function queryStringToObject(queryString) {
+  return queryString.split('&').reduce((map, pair) => {
+    const [key, value] = pair.split('=');
+    map[key] = value; // eslint-disable-line
+    return map;
+  }, {});
+}
+*/
 
 
 class GitHub {
   constructor() {
-    this.client_id = config.github.client_id;
-    this.client_secret = config.github.client_secret;
-    this.url = `https://github.com/login/oauth/authorize?client_id=${this.client_id}&scope=user`;
-    this.access_url = 'https://github.com/login/oauth/access_token';
-    this.code = null;
-    this.token = null;
+    this._client_id = config.github.client_id;
+    this._client_secret = config.github.client_secret;
+    this._access_url = 'https://github.com/login/oauth/access_token';
+    this._api_url = 'https://api.github.com';
+    this._code = null;
+    this._token = null;
+    this._login = null;
+    this._id = null;
+    this._email = null;
   }
 
-  setCodeFromUrl(u) {
-    const data = url.parse(u, true).query;
-
-    this.code = data.code;
+  get data() {
+    return {
+      login: this.login,
+      email: this.email,
+      token: this.token,
+      id: this.id,
+    };
   }
 
-  getToken() {
-    request({
-      url: this.access_url,
+  get token() {
+    return this._token;
+  }
+
+  get login() {
+    return this._login;
+  }
+
+  get id() {
+    return this._id;
+  }
+
+  get email() {
+    return this._email;
+  }
+
+  header(customHeader) {
+    let headers = {
+      Accept: 'application/json',
+      'User-Agent': 'githubnize-api',
+    };
+
+    if (this._token) {
+      headers.Authorization = `Bearer ${this._token}`;
+    }
+
+    if (customHeader) {
+      headers = {
+        ...headers,
+        ...customHeader,
+      };
+    }
+
+    return headers;
+  }
+
+  apiUrl(query) {
+    return this._api_url + query;
+  }
+
+  setUser() {
+    return fetch(this.apiUrl('/user'), {
+      method: 'GET',
+      headers: this.header(),
+    }).then((response) => { // eslint-disable-line
+      return response.json().then((json) => {
+        this._login = json.login;
+        this._id = json.id;
+        this._email = json.email;
+
+        return Promise.resolve();
+      });
+    });
+  }
+
+  setCode(reqUrl) {
+    const data = url.parse(reqUrl, true).query;
+
+    this._code = data.code;
+  }
+
+  prepare(reqUrl) {
+    this.setCode(reqUrl);
+
+    return fetch(this._access_url, {
       method: 'POST',
+      headers: this.header({ 'Content-Type': 'application/x-www-form-urlencoded' }),
       body: qs.stringify({
-        code: this.code,
-        client_id: this.client_id,
-        client_secret: this.client_secret,
+        code: this._code,
+        client_id: this._client_id,
+        client_secret: this._client_secret,
       }),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'githubnize-api',
-      },
-    }, (err, res, body) => {
-      console.log(body);
+    }).then((response) => { // eslint-disable-line
+      return response.json().then((json) => {
+        this._token = json.access_token;
 
-      // TODO: correct here
-      const data = url.parse(body, false).query;
-      this.token = data.access_token;
+        return this.setUser();
+      });
     });
   }
 }

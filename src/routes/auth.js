@@ -1,37 +1,38 @@
-
-// const { AuthController } = require('../controllers/auth');
-const github = require('../helpers/github');
 const router = require('express').Router();
+const config = require('../config/environment');
+const AuthController = require('../controllers/auth');
 
-/**
- * GET /auth
- */
-router.get('/', (req, res) => {
-  /*
-  const resolve = data => res.status(201).json(data); // TODO mustafa: use boom
-  const reject = error => res.status(400).json(error); // TODO mustafa: use boom
-
-  const { email } = req.body.email;
-  const { password } = req.body.password;
-
-  AuthenticateController.authenticate(email, password)
-    .then(resolve, reject);
-  */
-
-  res.redirect(github.url);
-});
 
 /*
- * POST /auth/callback
+ * GET /auth/callback
  */
 router.get('/callback', (req, res) => {
-  res.redirect('/');
+  const resolve = (data) => {
+    const payload = Buffer.from(JSON.stringify(data.login)).toString('base64');
+    const url = `${config.client.authCallback}?api_token=${data.api_token}&github_token=${data.github_token}&payload=${payload}`;
 
-  github.setCodeFromUrl(req.url);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('/auth/callback resolve'); // eslint-disable-line no-console
+      console.log('url: ', url); // eslint-disable-line no-console
+    }
 
-  github.getToken();
 
-  console.log(github.token);
+    res.redirect(302, url);
+  };
+
+  const reject = (error) => {
+    const payload = Buffer.from(JSON.stringify(error)).toString('base64');
+    const url = `${config.client.authCallback}?error=${payload}`;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('/auth/callback resolve'); // eslint-disable-line no-console
+      console.log('url: ', url); // eslint-disable-line no-console
+    }
+
+    res.redirect(302, url);
+  };
+
+  AuthController.authenticate(req.url).then(resolve, reject);
 });
 
 
