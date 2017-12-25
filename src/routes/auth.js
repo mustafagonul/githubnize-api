@@ -26,6 +26,7 @@ router.get('/callback', (req, res) => {
 
     if (process.env.NODE_ENV === 'development') {
       console.log('/auth/callback resolve'); // eslint-disable-line no-console
+      console.log('error: ', error); // eslint-disable-line no-console
       console.log('url: ', url); // eslint-disable-line no-console
     }
 

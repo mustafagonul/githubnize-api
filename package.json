@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "main": "src",
   "scripts": {
-    "edev": "NODE_ENV=development nodemon -w src -w specs --exec \"npm start\"",
-    "dev": "NODE_ENV=development nodemon -w src -w specs --exec \"npm run lint && npm run coverage:dev && npm start\"",
+    "dev": "NODE_ENV=development nodemon -w src -w specs --exec \"npm start\"",
+    "dev:lint": "NODE_ENV=development nodemon -w src -w specs --exec \"npm run lint && npm run coverage:dev && npm start\"",
     "dev:docker": "NODE_ENV=development_docker nodemon -w src -w specs --exec \"npm run lint && npm run test:docker && npm start\"",
     "start": "node src",
     "lint": "eslint src",
@@ -29,7 +29,9 @@
     "helmet": "^3.9.0",
     "jsonwebtoken": "^8.1.0",
     "mongoose": "^4.13.4",
-    "node-fetch": "^1.7.3"
+    "mongoose-slug-hero": "^1.0.8",
+    "node-fetch": "^1.7.3",
+    "slug": "^0.9.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",

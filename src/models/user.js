@@ -10,10 +10,10 @@ const userSchema = new mongoose.Schema(({
   id: {
     type: Number,
     required: true,
+    unique: true,
   },
   email: {
     type: String,
-    unique: true,
     lowercase: true,
     trim: true,
     required: true,

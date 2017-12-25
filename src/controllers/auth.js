@@ -9,7 +9,7 @@ const createJWTToken = data => jwt.sign(
 );
 
 const createSuccessMessage = (user, token) => {
-  const api_token = createJWTToken({ login: user.login, email: user.email, id: user.id }); // eslint-disable-line
+  const api_token = createJWTToken({ _id: user._id, login: user.login, email: user.email, id: user.id }); // eslint-disable-line
   const github_token = token; // eslint-disable-line
   const login = user.login;
 
@@ -27,7 +27,12 @@ const getUser = (githubData) => new Promise((resolve, reject) => {
 
   return User.findOne(userData).then((user) => {
     if (user === null) {
-      return reject('User could not be found!');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('User could not be found!'); // eslint-disable-line no-console
+      }
+
+      // return reject('User could not be found!');
+      return createUser(githubData).then(resolve, reject);
     }
 
     return resolve(createSuccessMessage(user, githubData.token));
