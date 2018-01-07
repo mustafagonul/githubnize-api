@@ -7,10 +7,10 @@ const TagController = {};
 TagController.getTags = login => new Promise((resolve, reject) => {
   const data = { login };
 
-  Tag.findOne(data)
+  Tag.find(data, 'name slug').select('-_id')
     .then((tag) => {
       if (tag === null) {
-        return reject();
+        return resolve([]);
       }
 
       resolve(tag);
@@ -25,7 +25,7 @@ TagController.getRepos = (login, slug) => new Promise((resolve, reject) => {
   Repo.findOne(data)
     .then((repos) => {
       if (repos === null) {
-        return reject();
+        return resolve([]);
       }
 
       resolve(repos);
@@ -37,7 +37,7 @@ TagController.getRepos = (login, slug) => new Promise((resolve, reject) => {
 TagController.createTag = (login, name) => new Promise((resolve, reject) => {
   const data = { login, name };
 
-  const newTag = new Repo(data);
+  const newTag = new Tag(data);
 
   newTag.save().then(resolve).catch(reject);
 });
