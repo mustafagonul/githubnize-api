@@ -18,6 +18,7 @@ node_modules
 src/config/environments/*.json
 !src/config/environments/test.json
 !src/config/environments/*.sample
+!src/config/environments/*.example
 
 # idea
 .idea
