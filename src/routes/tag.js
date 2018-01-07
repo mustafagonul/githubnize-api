@@ -44,6 +44,31 @@ router.post('/', (req, res) => {
 /**
  * POST /tag/:slug
  */
+router.post('/:slug', (req, res) => {
+  const resolve = data => res.status(200).json(data);
+  const reject = error => res.status(500).json(error);
+
+  const login = req.user.login;
+  const slug = req.params.slug;
+  const repo = req.body.repo;
+
+  TagController.updateRepo(login, slug, repo).then(resolve, reject);
+});
+
+/**
+ * DELETE /tag/:slug
+ */
+router.delete('/:slug', (req, res) => {
+  const resolve = data => res.status(200).json(data);
+  const reject = error => res.status(500).json(error);
+
+  const login = req.user.login;
+  const slug = req.params.slug;
+
+  TagController.removeTag(login, slug).then(resolve, reject);
+});
+
+
 router.post('/', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
@@ -54,6 +79,7 @@ router.post('/', (req, res) => {
 
   TagController.createRepo(login, slug, repo).then(resolve, reject);
 });
+
 
 /**
  * GET /users/:tagId
