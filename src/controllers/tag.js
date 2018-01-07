@@ -1,6 +1,7 @@
 const Tag = require('../models/tag');
 const Repo = require('../models/repo');
 
+
 const TagController = {};
 
 
@@ -19,27 +20,10 @@ TagController.getTags = login => new Promise((resolve, reject) => {
 });
 
 
-TagController.getRepos = (login, slug) => new Promise((resolve, reject) => {
-  const data = { login, slug };
-
-  Repo.findOne(data)
-    .then((repos) => {
-      if (repos === null) {
-        return resolve([]);
-      }
-
-      resolve(repos);
-    })
-    .catch(reject);
-});
-
-
 TagController.createTag = (login, name) => new Promise((resolve, reject) => {
   const data = { login, name };
 
   const newTag = new Tag(data);
-
-  console.log(newTag);
 
   newTag.save().then(resolve).catch(reject);
 });
@@ -49,19 +33,16 @@ TagController.removeTag = (login, slug) => new Promise((resolve, reject) => {
   const data = { login, slug };
 
   Tag.remove(data)
-    .then((err) => {
+    .then((err1) => {
+      Repo.remove(data)
+        .then((err2) => {
+          // resolve(); // TODO mustafa
+        })
+        .catch(reject); // TODO mustafa
+
       resolve();
     })
     .catch(reject); // TODO mustafa
-});
-
-
-TagController.createRepo = (login, slug, repo) => new Promise((resolve, reject) => {
-  const data = { login, slug, repo };
-
-  const newRepo = new Repo(data);
-
-  newRepo.save().then(resolve).catch(reject);
 });
 
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const auth = require('./auth');
 const tag = require('./tag');
+const repo = require('./repo');
 const authMiddleware = require('../middlewares/auth');
 
 const routes = () => {
@@ -12,6 +13,7 @@ const routes = () => {
 
   api.use(authMiddleware);
   api.use('/tag', tag);
+  api.use('/repo', repo);
 
   // Not Found
   api.all('*', (req, res) => {
