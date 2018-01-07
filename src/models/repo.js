@@ -7,9 +7,9 @@ const repoSchema = new mongoose.Schema(({
     trim: true,
     required: true,
   },
-  slug: {
+  owner: {
     type: String,
-    index: true,
+    trim: true,
     required: true,
   },
   repo: {
@@ -17,11 +17,21 @@ const repoSchema = new mongoose.Schema(({
     trim: true,
     required: true,
   },
+  slug: {
+    type: String,
+    index: true,
+    required: true,
+  },
 }
 ));
 
 
-repoSchema.index({ login: 1, slug: 1, repo: 1 }, { unique: true });
+repoSchema.index({
+  login: 1,
+  owner: 1,
+  repo: 1,
+  slug: 1,
+}, { unique: true });
 
 
 module.exports = mongoose.model('GithubnizeRepo', repoSchema);

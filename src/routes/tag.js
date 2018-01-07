@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const TagController = require('../controllers/tag');
+const RepoController = require('../controllers/repo');
 
 
 /**
@@ -24,7 +25,7 @@ router.get('/:slug', (req, res) => {
   const login = req.user.login;
   const slug = req.params.slug;
 
-  TagController.getRepos(login, slug).then(resolve, reject);
+  RepoController.getRepos(login, slug).then(resolve, reject);
 });
 
 
@@ -35,7 +36,7 @@ router.post('/', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
 
-  const login = req.body.login;
+  const login = req.user.login;
   const name = req.body.name;
 
   TagController.createTag(login, name).then(resolve, reject);
@@ -44,6 +45,7 @@ router.post('/', (req, res) => {
 /**
  * POST /tag/:slug
  */
+/*
 router.post('/:slug', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
@@ -54,6 +56,7 @@ router.post('/:slug', (req, res) => {
 
   TagController.updateRepo(login, slug, repo).then(resolve, reject);
 });
+*/
 
 /**
  * DELETE /tag/:slug
@@ -66,18 +69,6 @@ router.delete('/:slug', (req, res) => {
   const slug = req.params.slug;
 
   TagController.removeTag(login, slug).then(resolve, reject);
-});
-
-
-router.post('/', (req, res) => {
-  const resolve = data => res.status(200).json(data);
-  const reject = error => res.status(500).json(error);
-
-  const login = req.user.login;
-  const slug = req.params.slug;
-  const repo = req.body.repo;
-
-  TagController.createRepo(login, slug, repo).then(resolve, reject);
 });
 
 
