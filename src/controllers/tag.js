@@ -39,7 +39,20 @@ TagController.createTag = (login, name) => new Promise((resolve, reject) => {
 
   const newTag = new Tag(data);
 
+  console.log(newTag);
+
   newTag.save().then(resolve).catch(reject);
+});
+
+
+TagController.removeTag = (login, slug) => new Promise((resolve, reject) => {
+  const data = { login, slug };
+
+  Tag.remove(data)
+    .then((err) => {
+      resolve();
+    })
+    .catch(reject); // TODO mustafa
 });
 
 
