@@ -22,7 +22,7 @@ const tagSchema = new mongoose.Schema(({
 }));
 
 
-tagSchema.index({ login: 1, slug: 1 }, { unique: true });
+tagSchema.index({ login: 1, name: 1 }, { unique: true });
 
 tagSchema.plugin(slugHero, { doc: 'slugs', field: 'name' });
 

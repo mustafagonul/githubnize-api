@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
 
-  const { login } = req.user.login;
+  const login = req.user.login;
 
   TagController.getTags(login).then(resolve, reject);
 });
@@ -21,8 +21,8 @@ router.get('/:slug', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
 
-  const { login } = req.user.login;
-  const { slug } = req.params.slug;
+  const login = req.user.login;
+  const slug = req.params.slug;
 
   TagController.getRepos(login, slug).then(resolve, reject);
 });
@@ -31,12 +31,12 @@ router.get('/:slug', (req, res) => {
 /**
  * POST /tag
  */
-router.post('/', (res, req) => {
+router.post('/', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
 
-  const { login } = req.user.login;
-  const { name } = req.body.name;
+  const login = req.body.login;
+  const name = req.body.name;
 
   TagController.createTag(login, name).then(resolve, reject);
 });
@@ -44,13 +44,13 @@ router.post('/', (res, req) => {
 /**
  * POST /tag/:slug
  */
-router.post('/', (res, req) => {
+router.post('/', (req, res) => {
   const resolve = data => res.status(200).json(data);
   const reject = error => res.status(500).json(error);
 
-  const { login } = req.user.login;
-  const { slug } = req.params.slug;
-  const { repo } = req.body.repo;
+  const login = req.user.login;
+  const slug = req.params.slug;
+  const repo = req.body.repo;
 
   TagController.createRepo(login, slug, repo).then(resolve, reject);
 });

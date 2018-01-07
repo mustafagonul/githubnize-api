@@ -8,7 +8,7 @@ const AuthController = require('../controllers/auth');
  */
 router.get('/callback', (req, res) => {
   const resolve = (data) => {
-    const payload = Buffer.from(JSON.stringify(data.login)).toString('base64');
+    const payload = Buffer.from(data.login).toString('base64');
     const url = `${config.client.authCallback}?api_token=${data.api_token}&github_token=${data.github_token}&payload=${payload}`;
 
     if (process.env.NODE_ENV === 'development') {
